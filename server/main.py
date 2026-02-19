@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional
 from pydantic import BaseModel
+from datetime import datetime, timedelta
 from mock_data import inventory_items, orders, demand_forecasts, backlog_items, spending_summary, monthly_spending, category_spending, recent_transactions, purchase_orders
 
 app = FastAPI(title="Factory Inventory Management System")
@@ -89,6 +90,7 @@ class DemandForecast(BaseModel):
     forecasted_demand: int
     trend: str
     period: str
+    unit_cost: float
 
 class BacklogItem(BaseModel):
     id: str
@@ -119,6 +121,16 @@ class CreatePurchaseOrderRequest(BaseModel):
     unit_cost: float
     expected_delivery_date: str
     notes: Optional[str] = None
+
+class RestockingOrderItem(BaseModel):
+    item_sku: str
+    item_name: str
+    quantity: int
+    unit_cost: float
+
+class RestockingOrderRequest(BaseModel):
+    items: List[RestockingOrderItem]
+    total_budget: float
 
 # API endpoints
 @app.get("/")
@@ -303,6 +315,36 @@ def get_monthly_trends():
     result = list(months.values())
     result.sort(key=lambda x: x['month'])
     return result
+
+# In-memory storage for restocking orders
+restocking_orders = []
+
+@app.post("/api/restocking-orders")
+def create_restocking_order(request: RestockingOrderRequest):
+    """Create a new restocking order from budget recommendations"""
+    now = datetime.now()
+    order_id = f"restock-{int(now.timestamp())}"
+    order_number = f"RST-{now.strftime('%Y')}-{len(restocking_orders) + 1:04d}"
+    total_value = sum(item.quantity * item.unit_cost for item in request.items)
+
+    order = {
+        "id": order_id,
+        "order_number": order_number,
+        "items": [item.dict() for item in request.items],
+        "status": "Processing",
+        "order_date": now.strftime("%Y-%m-%d"),
+        "expected_delivery": (now + timedelta(days=14)).strftime("%Y-%m-%d"),
+        "total_value": round(total_value, 2),
+        "total_budget": request.total_budget
+    }
+
+    restocking_orders.append(order)
+    return order
+
+@app.get("/api/restocking-orders")
+def get_restocking_orders():
+    """Get all submitted restocking orders"""
+    return restocking_orders
 
 if __name__ == "__main__":
     import uvicorn
