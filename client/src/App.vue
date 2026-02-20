@@ -173,8 +173,8 @@ export default {
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background: #f8fafc;
-  color: #1e293b;
+  background: #FAF9F5;
+  color: #1A1A1A;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -187,7 +187,7 @@ body {
 
 .top-nav {
   background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #E8E3DC;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
@@ -221,16 +221,16 @@ body {
 .logo h1 {
   font-size: 1.375rem;
   font-weight: 700;
-  color: #0f172a;
+  color: #1A1A1A;
   letter-spacing: -0.025em;
 }
 
 .subtitle {
   font-size: 0.813rem;
-  color: #64748b;
+  color: #6B6866;
   font-weight: 400;
   padding-left: 0.75rem;
-  border-left: 1px solid #e2e8f0;
+  border-left: 1px solid #E8E3DC;
 }
 
 .nav-tabs {
@@ -240,7 +240,7 @@ body {
 
 .nav-tabs a {
   padding: 0.625rem 1.25rem;
-  color: #64748b;
+  color: #6B6866;
   text-decoration: none;
   font-weight: 500;
   font-size: 0.938rem;
@@ -250,13 +250,13 @@ body {
 }
 
 .nav-tabs a:hover {
-  color: #0f172a;
-  background: #f1f5f9;
+  color: #1A1A1A;
+  background: #F5F0EB;
 }
 
 .nav-tabs a.active {
-  color: #2563eb;
-  background: #eff6ff;
+  color: #D97757;
+  background: #FDF1EC;
 }
 
 .nav-tabs a.active::after {
@@ -266,7 +266,7 @@ body {
   left: 0;
   right: 0;
   height: 2px;
-  background: #2563eb;
+  background: #D97757;
 }
 
 .main-content {
@@ -284,13 +284,13 @@ body {
 .page-header h2 {
   font-size: 1.875rem;
   font-weight: 700;
-  color: #0f172a;
+  color: #1A1A1A;
   margin-bottom: 0.375rem;
   letter-spacing: -0.025em;
 }
 
 .page-header p {
-  color: #64748b;
+  color: #6B6866;
   font-size: 0.938rem;
 }
 
@@ -305,17 +305,17 @@ body {
   background: white;
   padding: 1.25rem;
   border-radius: 10px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #E8E3DC;
   transition: all 0.2s ease;
 }
 
 .stat-card:hover {
-  border-color: #cbd5e1;
+  border-color: #D5CEC4;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .stat-label {
-  color: #64748b;
+  color: #6B6866;
   font-size: 0.875rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -326,31 +326,31 @@ body {
 .stat-value {
   font-size: 2.25rem;
   font-weight: 700;
-  color: #0f172a;
+  color: #1A1A1A;
   letter-spacing: -0.025em;
 }
 
 .stat-card.warning .stat-value {
-  color: #ea580c;
+  color: #C4621A;
 }
 
 .stat-card.success .stat-value {
-  color: #059669;
+  color: #1A7A4A;
 }
 
 .stat-card.danger .stat-value {
-  color: #dc2626;
+  color: #B91C1C;
 }
 
 .stat-card.info .stat-value {
-  color: #2563eb;
+  color: #1A3A8F;
 }
 
 .card {
   background: white;
   border-radius: 10px;
   padding: 1.25rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #E8E3DC;
   margin-bottom: 1.25rem;
 }
 
@@ -360,13 +360,13 @@ body {
   align-items: center;
   margin-bottom: 1rem;
   padding-bottom: 0.875rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #E8E3DC;
 }
 
 .card-title {
   font-size: 1.125rem;
   font-weight: 700;
-  color: #0f172a;
+  color: #1A1A1A;
   letter-spacing: -0.025em;
 }
 
@@ -380,16 +380,16 @@ table {
 }
 
 thead {
-  background: #f8fafc;
-  border-top: 1px solid #e2e8f0;
-  border-bottom: 1px solid #e2e8f0;
+  background: #FAF7F4;
+  border-top: 1px solid #E8E3DC;
+  border-bottom: 1px solid #E8E3DC;
 }
 
 th {
   text-align: left;
   padding: 0.5rem 0.75rem;
   font-weight: 600;
-  color: #475569;
+  color: #6B6866;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -397,8 +397,8 @@ th {
 
 td {
   padding: 0.5rem 0.75rem;
-  border-top: 1px solid #f1f5f9;
-  color: #334155;
+  border-top: 1px solid #F0EBE4;
+  color: #3D3936;
   font-size: 0.875rem;
 }
 
@@ -407,7 +407,7 @@ tbody tr {
 }
 
 tbody tr:hover {
-  background: #f8fafc;
+  background: #FAF7F4;
 }
 
 .badge {
@@ -421,66 +421,66 @@ tbody tr:hover {
 }
 
 .badge.success {
-  background: #d1fae5;
-  color: #065f46;
+  background: #D4EDDA;
+  color: #1A5C36;
 }
 
 .badge.warning {
-  background: #fed7aa;
-  color: #92400e;
+  background: #FDE8D0;
+  color: #7A3E0A;
 }
 
 .badge.danger {
-  background: #fecaca;
-  color: #991b1b;
+  background: #FDDCDC;
+  color: #8B1A1A;
 }
 
 .badge.info {
-  background: #dbeafe;
-  color: #1e40af;
+  background: #E8EEF9;
+  color: #1A3A6B;
 }
 
 .badge.increasing {
-  background: #d1fae5;
-  color: #065f46;
+  background: #D4EDDA;
+  color: #1A5C36;
 }
 
 .badge.decreasing {
-  background: #fecaca;
-  color: #991b1b;
+  background: #FDDCDC;
+  color: #8B1A1A;
 }
 
 .badge.stable {
-  background: #e0e7ff;
-  color: #3730a3;
+  background: #EAE8F5;
+  color: #2D2466;
 }
 
 .badge.high {
-  background: #fecaca;
-  color: #991b1b;
+  background: #FDDCDC;
+  color: #8B1A1A;
 }
 
 .badge.medium {
-  background: #fed7aa;
-  color: #92400e;
+  background: #FDE8D0;
+  color: #7A3E0A;
 }
 
 .badge.low {
-  background: #dbeafe;
-  color: #1e40af;
+  background: #E8EEF9;
+  color: #1A3A6B;
 }
 
 .loading {
   text-align: center;
   padding: 3rem;
-  color: #64748b;
+  color: #6B6866;
   font-size: 0.938rem;
 }
 
 .error {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #991b1b;
+  background: #FDF0F0;
+  border: 1px solid #F5C6C6;
+  color: #8B1A1A;
   padding: 1rem;
   border-radius: 8px;
   margin: 1rem 0;

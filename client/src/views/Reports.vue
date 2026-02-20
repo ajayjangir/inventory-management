@@ -336,7 +336,7 @@ export default {
 .card-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #0f172a;
+  color: #1A1A1A;
   margin: 0;
 }
 
@@ -346,21 +346,21 @@ export default {
 }
 
 .reports-table th {
-  background: #f8fafc;
+  background: #FAF9F5;
   padding: 0.75rem;
   text-align: left;
   font-weight: 600;
-  color: #64748b;
-  border-bottom: 2px solid #e2e8f0;
+  color: #6B6866;
+  border-bottom: 2px solid #E8E3DC;
 }
 
 .reports-table td {
   padding: 0.75rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #E8E3DC;
 }
 
 .reports-table tr:hover {
-  background: #f8fafc;
+  background: #FAF9F5;
 }
 
 .chart-container {
@@ -400,13 +400,13 @@ export default {
 }
 
 .bar:hover {
-  background: linear-gradient(to top, #2563eb, #3b82f6);
+  background: linear-gradient(to top, #D97757, #3b82f6);
 }
 
 .bar-label {
   margin-top: 0.5rem;
   font-size: 0.75rem;
-  color: #64748b;
+  color: #6B6866;
   text-align: center;
   transform: rotate(-45deg);
   white-space: nowrap;
@@ -430,14 +430,14 @@ export default {
 
 .stat-label {
   font-size: 0.875rem;
-  color: #64748b;
+  color: #6B6866;
   margin-bottom: 0.5rem;
 }
 
 .stat-value {
   font-size: 1.875rem;
   font-weight: 700;
-  color: #0f172a;
+  color: #1A1A1A;
 }
 
 .badge {
@@ -475,7 +475,7 @@ export default {
 .loading {
   text-align: center;
   padding: 3rem;
-  color: #64748b;
+  color: #6B6866;
 }
 
 .error {
