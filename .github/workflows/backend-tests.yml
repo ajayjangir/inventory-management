@@ -1,0 +1,28 @@
+name: Backend Tests
+
+on:
+  pull_request:
+    paths:
+      - "server/**"
+      - "tests/backend/**"
+      - ".github/workflows/backend-tests.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          working-directory: server
+
+      - name: Install dependencies
+        working-directory: server
+        run: uv sync --dev
+
+      - name: Run backend tests
+        working-directory: tests
+        run: ../server/.venv/bin/pytest backend/ -v --tb=short
