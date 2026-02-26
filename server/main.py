@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional
 from pydantic import BaseModel
-from mock_data import inventory_items, orders, demand_forecasts, backlog_items, spending_summary, monthly_spending, category_spending, recent_transactions, purchase_orders
+from mock_data import inventory_items, orders, demand_forecasts, backlog_items, spending_summary, monthly_spending, category_spending, recent_transactions, purchase_orders, restocking_orders, save_restocking_orders
 
 app = FastAPI(title="Factory Inventory Management System")
 
@@ -89,6 +89,7 @@ class DemandForecast(BaseModel):
     forecasted_demand: int
     trend: str
     period: str
+    unit_cost: float
 
 class BacklogItem(BaseModel):
     id: str
@@ -119,6 +120,29 @@ class CreatePurchaseOrderRequest(BaseModel):
     unit_cost: float
     expected_delivery_date: str
     notes: Optional[str] = None
+
+class RestockingOrderItem(BaseModel):
+    item_sku: str
+    item_name: str
+    trend: str
+    quantity: int
+    unit_cost: float
+    line_total: float
+
+class CreateRestockingOrderRequest(BaseModel):
+    budget: float
+    lead_time_days: int
+    items: List[RestockingOrderItem]
+
+class RestockingOrder(BaseModel):
+    id: str
+    budget: float
+    lead_time_days: int
+    items: List[dict]
+    total_cost: float
+    status: str
+    submitted_at: str
+    expected_delivery_date: str
 
 # API endpoints
 @app.get("/")
@@ -303,6 +327,32 @@ def get_monthly_trends():
     result = list(months.values())
     result.sort(key=lambda x: x['month'])
     return result
+
+@app.get("/api/restocking-orders", response_model=List[RestockingOrder])
+def get_restocking_orders():
+    """Get all submitted restocking orders"""
+    return restocking_orders
+
+@app.post("/api/restocking-orders", response_model=RestockingOrder)
+def create_restocking_order(req: CreateRestockingOrderRequest):
+    """Submit a new restocking order based on budget and demand recommendations"""
+    from datetime import datetime, timedelta
+    now = datetime.now()
+    delivery = now + timedelta(days=req.lead_time_days)
+    order_id = f"RS-{str(len(restocking_orders) + 1).zfill(3)}"
+    order = {
+        "id": order_id,
+        "budget": req.budget,
+        "lead_time_days": req.lead_time_days,
+        "items": [item.model_dump() for item in req.items],
+        "total_cost": sum(item.line_total for item in req.items),
+        "status": "Submitted",
+        "submitted_at": now.isoformat(),
+        "expected_delivery_date": delivery.strftime("%b %d, %Y")
+    }
+    restocking_orders.append(order)
+    save_restocking_orders()
+    return order
 
 if __name__ == "__main__":
     import uvicorn

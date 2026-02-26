@@ -74,6 +74,57 @@
           </table>
         </div>
       </div>
+
+      <!-- Submitted restocking orders from the Restocking Planner tab -->
+      <div class="card" style="margin-top: 1.5rem;">
+        <div class="card-header">
+          <h3 class="card-title">Submitted Restocking Orders ({{ restockingOrders.length }})</h3>
+        </div>
+
+        <div v-if="restockingLoading" class="loading">Loading restocking orders...</div>
+        <div v-else-if="restockingError" class="error">{{ restockingError }}</div>
+        <div v-else-if="restockingOrders.length === 0" class="loading">
+          No restocking orders submitted yet.
+        </div>
+        <div v-else class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Submitted</th>
+                <th>Items</th>
+                <th>Budget</th>
+                <th>Total Cost</th>
+                <th>Lead Time</th>
+                <th>Expected Delivery</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="ro in restockingOrders" :key="ro.id">
+                <td><strong>{{ ro.id }}</strong></td>
+                <td>{{ formatDate(ro.submitted_at) }}</td>
+                <td>
+                  <details class="items-details">
+                    <summary class="items-summary">{{ ro.items.length }} item{{ ro.items.length !== 1 ? 's' : '' }}</summary>
+                    <div class="items-dropdown">
+                      <div v-for="item in ro.items" :key="item.item_sku" class="item-entry">
+                        <span class="item-name">{{ item.item_name }}</span>
+                        <span class="item-meta">{{ item.item_sku }} &mdash; qty {{ item.quantity }} @ ${{ item.unit_cost.toFixed(2) }} = ${{ item.line_total.toLocaleString() }}</span>
+                      </div>
+                    </div>
+                  </details>
+                </td>
+                <td>${{ ro.budget.toLocaleString() }}</td>
+                <td><strong>${{ ro.total_cost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</strong></td>
+                <td>{{ ro.lead_time_days }} days</td>
+                <td>{{ ro.expected_delivery_date }}</td>
+                <td><span class="badge info">{{ ro.status }}</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -95,6 +146,10 @@ export default {
     const loading = ref(true)
     const error = ref(null)
     const orders = ref([])
+
+    const restockingOrders = ref([])
+    const restockingLoading = ref(true)
+    const restockingError = ref(null)
 
     // Use shared filters
     const {
@@ -153,7 +208,21 @@ export default {
       })
     }
 
-    onMounted(loadOrders)
+    const loadRestockingOrders = async () => {
+      try {
+        restockingLoading.value = true
+        restockingOrders.value = await api.getRestockingOrders()
+      } catch (err) {
+        restockingError.value = 'Failed to load restocking orders: ' + err.message
+      } finally {
+        restockingLoading.value = false
+      }
+    }
+
+    onMounted(() => {
+      loadOrders()
+      loadRestockingOrders()
+    })
 
     return {
       t,
@@ -165,7 +234,10 @@ export default {
       formatDate,
       currencySymbol,
       translateProductName,
-      translateCustomerName
+      translateCustomerName,
+      restockingOrders,
+      restockingLoading,
+      restockingError
     }
   }
 }
