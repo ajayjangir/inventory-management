@@ -2,23 +2,30 @@
   <div class="profile-menu">
     <button
       class="profile-button"
+      :class="{ collapsed: collapsed }"
       @click="toggleDropdown"
       @blur="handleBlur"
+      :title="collapsed ? currentUser.name : ''"
     >
       <div class="avatar">
         {{ getInitials(currentUser.name) }}
       </div>
-      <span class="profile-name">{{ currentUser.name }}</span>
-      <svg
-        class="chevron"
-        :class="{ 'chevron-open': isDropdownOpen }"
-        width="16"
-        height="16"
-        viewBox="0 0 16 16"
-        fill="none"
-      >
-        <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>
+      <transition name="fade">
+        <span v-show="!collapsed" class="profile-name">{{ currentUser.name }}</span>
+      </transition>
+      <transition name="fade">
+        <svg
+          v-show="!collapsed"
+          class="chevron"
+          :class="{ 'chevron-open': isDropdownOpen }"
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+        >
+          <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </transition>
     </button>
 
     <div v-if="isDropdownOpen" class="dropdown-menu">
@@ -78,6 +85,13 @@ import { ref, computed } from 'vue'
 import { useAuth } from '../composables/useAuth'
 import { useI18n } from '../composables/useI18n'
 
+const props = defineProps({
+  collapsed: {
+    type: Boolean,
+    default: false
+  }
+})
+
 const { currentUser, logout, getInitials } = useAuth()
 const { t } = useI18n()
 
@@ -131,11 +145,26 @@ const handleLogout = () => {
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.profile-button.collapsed {
+  justify-content: center;
+  padding: 0.5rem;
 }
 
 .profile-button:hover {
   background: #f8fafc;
   border-color: #cbd5e1;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
 }
 
 .avatar {

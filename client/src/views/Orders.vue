@@ -8,6 +8,59 @@
     <div v-if="loading" class="loading">{{ t('common.loading') }}</div>
     <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else>
+      <!-- Restocking Orders Section -->
+      <div v-if="restockingOrders.length > 0" class="card restocking-orders-card">
+        <div class="card-header">
+          <h3 class="card-title restocking-title">Submitted Restocking Orders ({{ restockingOrders.length }})</h3>
+        </div>
+        <div class="table-container">
+          <table class="orders-table">
+            <thead>
+              <tr>
+                <th class="col-order-number">Order Number</th>
+                <th class="col-date">Order Date</th>
+                <th class="col-value">Total Cost</th>
+                <th class="col-date">Expected Delivery</th>
+                <th class="col-days">Days Remaining</th>
+                <th class="col-status">Status</th>
+                <th class="col-items">Items</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="order in restockingOrders" :key="order.order_number">
+                <td class="col-order-number"><strong>{{ order.order_number }}</strong></td>
+                <td class="col-date">{{ formatDate(order.order_date) }}</td>
+                <td class="col-value"><strong>{{ currencySymbol }}{{ order.total_cost.toLocaleString() }}</strong></td>
+                <td class="col-date">{{ formatDate(order.expected_delivery) }}</td>
+                <td class="col-days">
+                  <span :class="['days-badge', getDaysRemainingClass(order.expected_delivery)]">
+                    {{ calculateDaysRemaining(order.expected_delivery) }} days
+                  </span>
+                </td>
+                <td class="col-status">
+                  <span class="badge info">
+                    {{ order.status }}
+                  </span>
+                </td>
+                <td class="col-items">
+                  <details class="items-details">
+                    <summary class="items-summary">
+                      {{ order.items.length }} items
+                    </summary>
+                    <div class="items-dropdown">
+                      <div v-for="(item, idx) in order.items" :key="idx" class="item-entry">
+                        <span class="item-name">{{ item.item_name }}</span>
+                        <span class="item-meta">Qty: {{ item.quantity }} @ {{ currencySymbol }}{{ item.unit_cost }}</span>
+                      </div>
+                    </div>
+                  </details>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <div class="stats-grid">
         <div class="stat-card success">
           <div class="stat-label">{{ t('status.delivered') }}</div>
@@ -95,6 +148,7 @@ export default {
     const loading = ref(true)
     const error = ref(null)
     const orders = ref([])
+    const restockingOrders = ref([])
 
     // Use shared filters
     const {
@@ -122,6 +176,28 @@ export default {
       } finally {
         loading.value = false
       }
+    }
+
+    const loadRestockingOrders = async () => {
+      try {
+        restockingOrders.value = await api.getRestockingOrders()
+      } catch (err) {
+        console.error('Failed to load restocking orders:', err)
+      }
+    }
+
+    const calculateDaysRemaining = (expectedDelivery) => {
+      const today = new Date()
+      const delivery = new Date(expectedDelivery)
+      const diff = Math.ceil((delivery - today) / (1000 * 60 * 60 * 24))
+      return diff > 0 ? diff : 0
+    }
+
+    const getDaysRemainingClass = (expectedDelivery) => {
+      const days = calculateDaysRemaining(expectedDelivery)
+      if (days <= 3) return 'urgent'
+      if (days <= 7) return 'soon'
+      return 'normal'
     }
 
     // Watch for filter changes and reload data
@@ -153,19 +229,25 @@ export default {
       })
     }
 
-    onMounted(loadOrders)
+    onMounted(() => {
+      loadOrders()
+      loadRestockingOrders()
+    })
 
     return {
       t,
       loading,
       error,
       orders,
+      restockingOrders,
       getOrdersByStatus,
       getOrderStatusClass,
       formatDate,
       currencySymbol,
       translateProductName,
-      translateCustomerName
+      translateCustomerName,
+      calculateDaysRemaining,
+      getDaysRemainingClass
     }
   }
 }
@@ -275,5 +357,42 @@ export default {
 .item-meta {
   font-size: 0.813rem;
   color: #64748b;
+}
+
+/* Restocking Orders Styles */
+.restocking-orders-card {
+  margin-bottom: 2rem;
+  border-left: 4px solid #2563eb;
+}
+
+.restocking-title {
+  color: #2563eb;
+}
+
+.col-days {
+  width: 140px;
+}
+
+.days-badge {
+  display: inline-block;
+  padding: 0.313rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.813rem;
+  font-weight: 600;
+}
+
+.days-badge.urgent {
+  background: #fecaca;
+  color: #991b1b;
+}
+
+.days-badge.soon {
+  background: #fed7aa;
+  color: #92400e;
+}
+
+.days-badge.normal {
+  background: #d1fae5;
+  color: #065f46;
 }
 </style>
