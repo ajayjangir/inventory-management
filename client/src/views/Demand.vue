@@ -232,27 +232,29 @@ export default {
 }
 
 .trend-card {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 1.5rem;
+  background: var(--bg-primary, #ffffff);
+  border: 1px solid var(--border-default, #e2e8f0);
+  border-radius: var(--radius-lg, 12px);
+  padding: 20px;
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0,0,0,0.05));
   transition: all 0.2s ease;
 }
 
 .trend-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05));
 }
 
 .increasing-card {
-  border-left: 4px solid #10b981;
+  border-left: 3px solid var(--status-green, #10b981);
 }
 
 .stable-card {
-  border-left: 4px solid #3b82f6;
+  border-left: 3px solid var(--status-blue, #3b82f6);
 }
 
 .decreasing-card {
-  border-left: 4px solid #ef4444;
+  border-left: 3px solid var(--status-red, #ef4444);
 }
 
 .trend-header {
@@ -261,7 +263,7 @@ export default {
   gap: 1rem;
   margin-bottom: 1rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border-default, #e2e8f0);
 }
 
 .trend-icon {
@@ -270,39 +272,39 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: var(--radius-md, 8px);
   font-size: 1.75rem;
   font-weight: 700;
   flex-shrink: 0;
 }
 
 .increasing-card .trend-icon {
-  background: #d1fae5;
-  color: #059669;
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--status-green, #10b981);
 }
 
 .stable-card .trend-icon {
-  background: #dbeafe;
-  color: #2563eb;
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--status-blue, #3b82f6);
 }
 
 .decreasing-card .trend-icon {
-  background: #fee2e2;
-  color: #dc2626;
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--status-red, #ef4444);
 }
 
 .trend-label {
-  font-size: 0.875rem;
+  font-size: 13px;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-muted, #64748b);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.025em;
 }
 
 .trend-count {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-primary, #0f172a);
   margin-top: 0.25rem;
 }
 
@@ -317,18 +319,18 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0.75rem;
-  background: #f8fafc;
-  border-radius: 6px;
+  background: var(--bg-secondary, #f8fafc);
+  border-radius: var(--radius-sm, 6px);
   transition: background 0.2s;
 }
 
 .trend-item:hover {
-  background: #f1f5f9;
+  background: var(--bg-tertiary, #f1f5f9);
 }
 
 .item-name {
   font-size: 0.875rem;
-  color: #0f172a;
+  color: var(--text-primary, #0f172a);
   font-weight: 500;
   flex: 1;
   overflow: hidden;
@@ -344,24 +346,24 @@ export default {
 }
 
 .increasing-card .item-change {
-  color: #059669;
+  color: var(--status-green, #10b981);
 }
 
 .stable-card .item-change {
-  color: #3b82f6;
+  color: var(--status-blue, #3b82f6);
 }
 
 .decreasing-card .item-change {
-  color: #dc2626;
+  color: var(--status-red, #ef4444);
 }
 
 .item-change.neutral {
-  color: #64748b;
+  color: var(--text-muted, #64748b);
 }
 
 .more-items {
   font-size: 0.813rem;
-  color: #64748b;
+  color: var(--text-muted, #64748b);
   font-style: italic;
   text-align: center;
   padding: 0.5rem;

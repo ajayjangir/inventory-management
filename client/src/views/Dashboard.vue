@@ -731,12 +731,18 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-6, 24px);
+}
+
+.page-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
 }
 
 .header-meta {
   font-size: 0.813rem;
-  color: #64748b;
+  color: var(--text-muted, #64748b);
 }
 
 .kpi-section {
@@ -746,7 +752,7 @@ export default {
 .section-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--text-secondary, #334155);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 1rem;
@@ -759,10 +765,11 @@ export default {
 }
 
 .kpi-card {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 1rem;
+  background: var(--bg-primary, white);
+  border: 1px solid var(--border-default, #e2e8f0);
+  border-radius: var(--radius-lg, 12px);
+  padding: var(--space-5, 20px);
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0,0,0,0.05));
 }
 
 .kpi-header {
@@ -770,9 +777,9 @@ export default {
 }
 
 .kpi-label {
-  font-size: 0.813rem;
+  font-size: 13px;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-muted, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.025em;
 }
@@ -780,34 +787,34 @@ export default {
 .kpi-value {
   font-size: 2rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-primary, #0f172a);
   margin-bottom: 0.5rem;
   letter-spacing: -0.025em;
 }
 
 .kpi-goal {
-  font-size: 0.813rem;
-  color: #64748b;
+  font-size: 13px;
+  color: var(--text-muted, #64748b);
   margin-bottom: 0.75rem;
 }
 
 .kpi-progress-bar {
   width: 100%;
   height: 6px;
-  background: #f1f5f9;
+  background: var(--bg-tertiary, #f1f5f9);
   border-radius: 3px;
   overflow: hidden;
 }
 
 .kpi-progress {
   height: 100%;
-  background: #3b82f6;
+  background: var(--status-blue, #3b82f6);
   border-radius: 3px;
   transition: width 0.6s ease;
 }
 
 .kpi-progress.success {
-  background: #10b981;
+  background: var(--status-green, #10b981);
 }
 
 .charts-grid {
@@ -815,6 +822,14 @@ export default {
   grid-template-columns: repeat(2, 1fr);
   gap: 1.25rem;
   margin-bottom: 1.5rem;
+}
+
+.charts-grid .card {
+  background: var(--bg-primary, white);
+  border: 1px solid var(--border-default, #e2e8f0);
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0,0,0,0.05));
+  padding: var(--space-5, 20px);
 }
 
 .chart-card.full-width {
@@ -1093,12 +1108,12 @@ export default {
 .success-icon {
   width: 48px;
   height: 48px;
-  color: #10b981;
+  color: var(--status-green, #10b981);
 }
 
 .no-backlog-text {
   font-size: 1.125rem;
-  color: #10b981;
+  color: var(--status-green, #10b981);
   font-weight: 600;
   margin: 0;
 }
@@ -1109,7 +1124,82 @@ export default {
 }
 
 .clickable-row:hover {
-  background: #eff6ff !important;
+  background: var(--bg-secondary, #f8fafc) !important;
+}
+
+/* Table styles following design system */
+.table-container {
+  overflow: hidden;
+  border-radius: var(--radius-lg, 12px);
+  border: 1px solid var(--border-default, #e2e8f0);
+}
+
+.table-container table thead {
+  background: var(--bg-tertiary, #f1f5f9);
+}
+
+.table-container table th {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  padding: 0.75rem;
+  color: var(--text-secondary, #334155);
+}
+
+.table-container table tbody tr {
+  height: 48px;
+}
+
+.table-container table tbody tr:hover {
+  background: var(--bg-secondary, #f8fafc);
+}
+
+.table-container table td {
+  padding: 0.75rem;
+}
+
+/* Badge updates for semantic colors */
+.badge {
+  border-radius: var(--radius-sm, 6px);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0.313rem 0.75rem;
+}
+
+.badge.success {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--status-green, #10b981);
+}
+
+.badge.warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--status-amber, #f59e0b);
+}
+
+.badge.danger {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--status-red, #ef4444);
+}
+
+.badge.info {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--status-blue, #3b82f6);
+}
+
+.badge.high {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--status-red, #ef4444);
+}
+
+.badge.medium {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--status-amber, #f59e0b);
+}
+
+.badge.low {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--status-blue, #3b82f6);
 }
 
 /* Tasks Card Styles */
@@ -1237,34 +1327,34 @@ export default {
 }
 
 .po-button {
-  padding: 0.5rem 1rem;
+  padding: var(--space-2, 8px) var(--space-4, 16px);
   border: none;
-  border-radius: 6px;
-  font-size: 0.813rem;
-  font-weight: 600;
+  border-radius: var(--radius-sm, 6px);
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
 }
 
 .po-button.create {
-  background: #3b82f6;
+  background: var(--status-blue, #3b82f6);
   color: white;
 }
 
 .po-button.create:hover {
-  background: #2563eb;
+  background: var(--accent, #2563eb);
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
 }
 
 .po-button.view {
-  background: #64748b;
+  background: var(--text-muted, #64748b);
   color: white;
 }
 
 .po-button.view:hover {
-  background: #475569;
+  background: var(--text-secondary, #475569);
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3);
 }

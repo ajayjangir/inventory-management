@@ -226,16 +226,29 @@ export default {
 
 <style scoped>
 .page-header {
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--space-6, 24px);
 }
 
 .page-header h2 {
+  font-size: 24px;
+  font-weight: 700;
   margin-bottom: 0.25rem;
+  color: var(--text-primary, #0f172a);
 }
 
 .page-header p {
-  color: #64748b;
+  color: var(--text-muted, #64748b);
   font-size: 0.875rem;
+}
+
+/* Card styling */
+.inventory .card {
+  background: var(--bg-primary, white);
+  border: 1px solid var(--border-default, #e2e8f0);
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0,0,0,0.05));
+  padding: var(--space-5, 20px);
+  margin-bottom: 1.5rem;
 }
 
 .card-header {
@@ -243,14 +256,15 @@ export default {
   justify-content: space-between;
   align-items: center;
   gap: 1.5rem;
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 0 0 var(--space-5, 20px) 0;
+  border-bottom: 1px solid var(--border-default, #e2e8f0);
+  margin-bottom: var(--space-5, 20px);
 }
 
 .card-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--text-primary, #0f172a);
   margin: 0;
 }
 
@@ -266,30 +280,30 @@ export default {
   left: 0.75rem;
   width: 18px;
   height: 18px;
-  color: #94a3b8;
+  color: var(--text-muted, #94a3b8);
   pointer-events: none;
 }
 
 .search-input {
   width: 100%;
   padding: 0.5rem 2.5rem 0.5rem 2.5rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  border: 1px solid var(--border-default, #e2e8f0);
+  border-radius: var(--radius-md, 8px);
   font-size: 0.875rem;
-  color: #0f172a;
-  background: #f8fafc;
+  color: var(--text-primary, #0f172a);
+  background: var(--bg-secondary, #f8fafc);
   transition: all 0.2s;
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #3b82f6;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--accent, #2563eb);
+  background: var(--bg-primary, white);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .search-input::placeholder {
-  color: #94a3b8;
+  color: var(--text-muted, #94a3b8);
 }
 
 .clear-search {
@@ -301,15 +315,15 @@ export default {
   padding: 0.25rem;
   background: transparent;
   border: none;
-  border-radius: 4px;
-  color: #94a3b8;
+  border-radius: var(--radius-sm, 6px);
+  color: var(--text-muted, #94a3b8);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .clear-search:hover {
-  background: #e2e8f0;
-  color: #64748b;
+  background: var(--border-default, #e2e8f0);
+  color: var(--text-muted, #64748b);
 }
 
 .clear-search svg {
@@ -317,15 +331,70 @@ export default {
   height: 18px;
 }
 
+/* Table styling */
+.table-container {
+  overflow: hidden;
+  border-radius: var(--radius-lg, 12px);
+  border: 1px solid var(--border-default, #e2e8f0);
+}
+
+.table-container table thead {
+  background: var(--bg-tertiary, #f1f5f9);
+}
+
+.table-container table th {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  padding: 0.75rem;
+  color: var(--text-secondary, #334155);
+}
+
+.table-container table tbody tr {
+  height: 48px;
+}
+
+.table-container table tbody tr:hover {
+  background: var(--bg-secondary, #f8fafc);
+}
+
+.table-container table td {
+  padding: 0.75rem;
+}
+
+/* Badge styling with semantic colors */
+.badge {
+  border-radius: var(--radius-sm, 6px);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0.313rem 0.75rem;
+}
+
+.badge.success {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--status-green, #10b981);
+}
+
+.badge.warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--status-amber, #f59e0b);
+}
+
+.badge.danger {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--status-red, #ef4444);
+}
+
 .loading,
 .error {
   padding: 2rem;
   text-align: center;
-  color: #64748b;
+  color: var(--text-muted, #64748b);
 }
 
 .error {
-  color: #ef4444;
+  color: var(--status-red, #ef4444);
 }
 
 .clickable-row {
@@ -334,6 +403,6 @@ export default {
 }
 
 .clickable-row:hover {
-  background: #eff6ff !important;
+  background: var(--bg-secondary, #f8fafc) !important;
 }
 </style>
