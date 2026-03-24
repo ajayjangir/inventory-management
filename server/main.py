@@ -89,6 +89,7 @@ class DemandForecast(BaseModel):
     forecasted_demand: int
     trend: str
     period: str
+    unit_cost: float
 
 class BacklogItem(BaseModel):
     id: str
@@ -119,6 +120,17 @@ class CreatePurchaseOrderRequest(BaseModel):
     unit_cost: float
     expected_delivery_date: str
     notes: Optional[str] = None
+
+class RestockingItem(BaseModel):
+    item_sku: str
+    item_name: str
+    quantity: int
+    unit_cost: float
+    total_cost: float
+
+class RestockingOrderRequest(BaseModel):
+    items: List[RestockingItem]
+    total_budget_used: float
 
 # API endpoints
 @app.get("/")
@@ -303,6 +315,47 @@ def get_monthly_trends():
     result = list(months.values())
     result.sort(key=lambda x: x['month'])
     return result
+
+@app.post("/api/restocking/orders")
+def create_restocking_order(request: RestockingOrderRequest):
+    """Submit a restocking order based on demand gap analysis.
+    Appends to in-memory orders list (persists until server restart)."""
+    from datetime import datetime, timedelta
+
+    max_order_num = max(int(o["order_number"].split("-")[-1]) for o in orders)
+    next_num = max_order_num + 1
+    order_number = f"ORD-2025-{next_num:04d}"
+
+    now = datetime.now()
+    # 14 calendar days lead time
+    expected_delivery = now + timedelta(days=14)
+
+    order_items = [
+        {
+            "sku": item.item_sku,
+            "name": item.item_name,
+            "quantity": item.quantity,
+            "unit_price": item.unit_cost
+        }
+        for item in request.items
+    ]
+
+    new_order = {
+        "id": str(len(orders) + 1),
+        "order_number": order_number,
+        "customer": "Internal Restocking",
+        "items": order_items,
+        "status": "Submitted",
+        "warehouse": "San Francisco",
+        "category": "Restocking",
+        "order_date": now.strftime("%Y-%m-%dT%H:%M:%S"),
+        "expected_delivery": expected_delivery.strftime("%Y-%m-%dT%H:%M:%S"),
+        "total_value": round(request.total_budget_used, 2),
+        "actual_delivery": None
+    }
+
+    orders.append(new_order)
+    return new_order
 
 if __name__ == "__main__":
     import uvicorn

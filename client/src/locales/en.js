@@ -6,6 +6,7 @@ export default {
     orders: 'Orders',
     finance: 'Finance',
     demandForecast: 'Demand Forecast',
+    restocking: 'Restocking',
     companyName: 'Catalyst Components',
     subtitle: 'Inventory Management System'
   },
@@ -188,6 +189,37 @@ export default {
     }
   },
 
+  // Restocking
+  restocking: {
+    title: 'Restocking',
+    description: 'Restock inventory based on demand gap analysis',
+    budgetSlider: {
+      label: 'Restocking Budget'
+    },
+    recommendations: 'Recommended Items',
+    noRecommendations: 'No items need restocking (all demand gaps are zero or negative)',
+    table: {
+      sku: 'SKU',
+      itemName: 'Item Name',
+      demandGap: 'Demand Gap',
+      unitCost: 'Unit Cost',
+      recommendedQty: 'Recommended Qty',
+      totalCost: 'Total Cost'
+    },
+    summary: {
+      totalItems: 'Items to Restock',
+      totalUnits: 'Total Units',
+      totalCost: 'Total Cost',
+      budgetRemaining: 'Budget Remaining'
+    },
+    placeOrder: 'Place Order',
+    orderSuccess: 'Restocking order submitted successfully!',
+    orderError: 'Failed to submit restocking order',
+    submitting: 'Submitting...',
+    orderPlaced: 'Order {orderNumber} has been placed. View it in the Orders tab.',
+    leadTime: '14-day lead time'
+  },
+
   // Filters
   filters: {
     timePeriod: 'Time Period',
@@ -204,6 +236,7 @@ export default {
     shipped: 'Shipped',
     processing: 'Processing',
     backordered: 'Backordered',
+    submitted: 'Submitted',
     inStock: 'In Stock',
     lowStock: 'Low Stock',
     adequate: 'Adequate'

@@ -6,6 +6,7 @@ export default {
     orders: '注文',
     finance: '財務',
     demandForecast: '需要予測',
+    restocking: '再発注',
     companyName: '触媒コンポーネンツ',
     subtitle: '在庫管理システム'
   },
@@ -188,6 +189,37 @@ export default {
     }
   },
 
+  // Restocking
+  restocking: {
+    title: '再発注',
+    description: '需要ギャップ分析に基づく在庫の再発注',
+    budgetSlider: {
+      label: '再発注予算'
+    },
+    recommendations: '推奨品目',
+    noRecommendations: '再発注が必要な品目はありません（すべての需要ギャップがゼロまたはマイナスです）',
+    table: {
+      sku: 'SKU',
+      itemName: '品目名',
+      demandGap: '需要ギャップ',
+      unitCost: '単価',
+      recommendedQty: '推奨数量',
+      totalCost: '合計コスト'
+    },
+    summary: {
+      totalItems: '再発注品目数',
+      totalUnits: '合計数量',
+      totalCost: '合計コスト',
+      budgetRemaining: '残り予算'
+    },
+    placeOrder: '注文する',
+    orderSuccess: '再発注が正常に提出されました！',
+    orderError: '再発注の提出に失敗しました',
+    submitting: '提出中...',
+    orderPlaced: '注文 {orderNumber} が発注されました。注文タブで確認してください。',
+    leadTime: '14日間のリードタイム'
+  },
+
   // Filters
   filters: {
     timePeriod: '期間',
@@ -204,6 +236,7 @@ export default {
     shipped: '出荷済み',
     processing: '処理中',
     backordered: 'バックオーダー',
+    submitted: '提出済み',
     inStock: '在庫あり',
     lowStock: '在庫僅少',
     adequate: '適量'
