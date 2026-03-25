@@ -29,7 +29,7 @@
 
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">{{ t('orders.allOrders') }} ({{ orders.length }})</h3>
+          <h3 class="card-title">{{ t('orders.allOrders') }} ({{ regularOrders.length }})</h3>
         </div>
         <div class="table-container">
           <table class="orders-table">
@@ -45,7 +45,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="order in orders" :key="order.id">
+              <tr v-for="order in regularOrders" :key="order.id">
                 <td class="col-order-number"><strong>{{ order.order_number }}</strong></td>
                 <td class="col-customer">{{ translateCustomerName(order.customer) }}</td>
                 <td class="col-items">
@@ -68,6 +68,40 @@
                 </td>
                 <td class="col-date">{{ formatDate(order.order_date) }}</td>
                 <td class="col-date">{{ formatDate(order.expected_delivery) }}</td>
+                <td class="col-value"><strong>{{ currencySymbol }}{{ order.total_value.toLocaleString() }}</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Submitted Orders Section -->
+      <div class="card submitted-orders-card">
+        <div class="card-header">
+          <h3 class="card-title">Submitted Orders ({{ submittedOrders.length }})</h3>
+        </div>
+        <div v-if="submittedOrders.length === 0" class="no-submitted">
+          No submitted orders yet.
+        </div>
+        <div v-else class="table-container">
+          <table class="submitted-table">
+            <thead>
+              <tr>
+                <th class="col-order-number">Order Number</th>
+                <th class="col-items">Items</th>
+                <th class="col-date">Order Date</th>
+                <th class="col-date">Expected Delivery</th>
+                <th class="col-lead-time">Lead Time</th>
+                <th class="col-value">Total Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="order in submittedOrders" :key="order.id">
+                <td class="col-order-number"><strong>{{ order.order_number }}</strong></td>
+                <td class="col-items">{{ order.items.length }} item(s)</td>
+                <td class="col-date">{{ formatDate(order.order_date) }}</td>
+                <td class="col-date">{{ formatDate(order.expected_delivery) }}</td>
+                <td class="col-lead-time">{{ leadTimeDays(order) }} days</td>
                 <td class="col-value"><strong>{{ currencySymbol }}{{ order.total_value.toLocaleString() }}</strong></td>
               </tr>
             </tbody>
@@ -153,6 +187,21 @@ export default {
       })
     }
 
+    const regularOrders = computed(() =>
+      orders.value.filter(o => o.status !== 'Submitted')
+    )
+
+    const submittedOrders = computed(() =>
+      orders.value.filter(o => o.status === 'Submitted')
+    )
+
+    // Calculate lead time in days between order_date and expected_delivery
+    const leadTimeDays = (order) => {
+      const orderDate = new Date(order.order_date)
+      const expectedDate = new Date(order.expected_delivery)
+      return Math.round((expectedDate - orderDate) / (1000 * 60 * 60 * 24))
+    }
+
     onMounted(loadOrders)
 
     return {
@@ -160,6 +209,9 @@ export default {
       loading,
       error,
       orders,
+      regularOrders,
+      submittedOrders,
+      leadTimeDays,
       getOrdersByStatus,
       getOrderStatusClass,
       formatDate,
@@ -275,5 +327,25 @@ export default {
 .item-meta {
   font-size: 0.813rem;
   color: #64748b;
+}
+
+.submitted-orders-card {
+  margin-top: 1.5rem;
+}
+
+.submitted-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.col-lead-time {
+  width: 100px;
+}
+
+.no-submitted {
+  padding: 2rem;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.9rem;
 }
 </style>
