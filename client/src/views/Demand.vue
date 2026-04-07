@@ -111,15 +111,17 @@
 </template>
 
 <script>
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, watch, computed, nextTick, onBeforeUnmount } from 'vue'
 import { api } from '../api'
 import { useFilters } from '../composables/useFilters'
 import { useI18n } from '../composables/useI18n'
+import { useAnimations } from '../composables/useAnimations'
 
 export default {
   name: 'Demand',
   setup() {
     const { t } = useI18n()
+    const { staggerFadeUp, springPop, staggerTableRows, cleanup } = useAnimations()
     const loading = ref(true)
     const error = ref(null)
     const allForecasts = ref([])
@@ -161,10 +163,24 @@ export default {
       }
     }
 
+    const playEntranceAnimations = () => {
+      springPop('.trend-card')
+      staggerTableRows('.table-container table', { delay: 0.4 })
+    }
+
     // Watch for filter changes and reload data
     watch([selectedLocation, selectedCategory], () => {
       loadForecasts()
     })
+
+    watch(loading, async (newVal, oldVal) => {
+      if (oldVal === true && newVal === false && !error.value) {
+        await nextTick()
+        playEntranceAnimations()
+      }
+    })
+
+    onBeforeUnmount(cleanup)
 
     const getForecastsByTrend = (trend) => {
       return forecasts.value.filter(f => f.trend === trend)
@@ -236,11 +252,12 @@ export default {
   border: 1px solid #e2e8f0;
   border-radius: 10px;
   padding: 1.5rem;
-  transition: all 0.2s ease;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
 }
 
 .trend-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
 }
 
 .increasing-card {

@@ -84,8 +84,9 @@
 </template>
 
 <script>
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, watch, computed, nextTick, onBeforeUnmount } from 'vue'
 import { api } from '../api'
+import { useAnimations } from '../composables/useAnimations'
 import { useFilters } from '../composables/useFilters'
 import { useI18n } from '../composables/useI18n'
 import InventoryDetailModal from '../components/InventoryDetailModal.vue'
@@ -200,6 +201,22 @@ export default {
       selectedItem.value = item
       showItemModal.value = true
     }
+
+    const { staggerFadeUp, staggerTableRows, cleanup } = useAnimations()
+
+    const playEntranceAnimations = () => {
+      staggerFadeUp('.card', { duration: 0.4 })
+      staggerTableRows('.table-container table', { delay: 0.2 })
+    }
+
+    watch(loading, async (newVal, oldVal) => {
+      if (oldVal === true && newVal === false && !error.value) {
+        await nextTick()
+        playEntranceAnimations()
+      }
+    })
+
+    onBeforeUnmount(cleanup)
 
     onMounted(loadInventory)
 
