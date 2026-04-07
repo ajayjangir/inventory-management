@@ -181,7 +181,8 @@ const getSummaryCardClass = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -192,7 +193,7 @@ const getSummaryCardClass = () => {
 .modal-container {
   background: white;
   border-radius: 12px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1);
   max-width: 700px;
   width: 100%;
   max-height: 90vh;
@@ -428,7 +429,9 @@ const getSummaryCardClass = () => {
 }
 
 /* Modal transition animations */
-.modal-enter-active,
+.modal-enter-active {
+  transition: opacity 0.35s ease;
+}
 .modal-leave-active {
   transition: opacity 0.2s ease;
 }
@@ -438,13 +441,17 @@ const getSummaryCardClass = () => {
   opacity: 0;
 }
 
-.modal-enter-active .modal-container,
+.modal-enter-active .modal-container {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
 .modal-leave-active .modal-container {
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease-in;
 }
 
-.modal-enter-from .modal-container,
+.modal-enter-from .modal-container {
+  transform: scale(0.8);
+}
 .modal-leave-to .modal-container {
-  transform: scale(0.95);
+  transform: scale(0.9);
 }
 </style>

@@ -79,10 +79,11 @@
 </template>
 
 <script>
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch, computed, nextTick } from 'vue'
 import { api } from '../api'
 import { useFilters } from '../composables/useFilters'
 import { useI18n } from '../composables/useI18n'
+import { useAnimations } from '../composables/useAnimations'
 
 export default {
   name: 'Orders',
@@ -104,6 +105,13 @@ export default {
       selectedStatus,
       getCurrentFilters
     } = useFilters()
+
+    const { staggerFadeUp, staggerTableRows, cleanup } = useAnimations()
+
+    const playEntranceAnimations = () => {
+      staggerFadeUp('.stat-card')
+      staggerTableRows('.orders-table', { delay: 0.3 })
+    }
 
     const loadOrders = async () => {
       try {
@@ -153,7 +161,15 @@ export default {
       })
     }
 
+    watch(loading, async (newVal, oldVal) => {
+      if (oldVal === true && newVal === false && !error.value) {
+        await nextTick()
+        playEntranceAnimations()
+      }
+    })
+
     onMounted(loadOrders)
+    onBeforeUnmount(cleanup)
 
     return {
       t,

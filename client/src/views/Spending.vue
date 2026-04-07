@@ -172,8 +172,9 @@
 </template>
 
 <script>
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, watch, computed, nextTick, onBeforeUnmount } from 'vue'
 import { api } from '../api'
+import { useAnimations } from '../composables/useAnimations'
 import { useFilters } from '../composables/useFilters'
 import { useI18n } from '../composables/useI18n'
 import { formatCurrency as formatCurrencyUtil } from '../utils/currency'
@@ -186,6 +187,14 @@ export default {
   },
   setup() {
     const { t, currentCurrency } = useI18n()
+    const { staggerFadeUp, barGrow, staggerTableRows, cleanup } = useAnimations()
+
+    const playEntranceAnimations = () => {
+      staggerFadeUp('.stats-grid-finance .stat-card')
+      staggerFadeUp('.chart-card', { delay: 0.3 })
+      barGrow('.category-bar', { delay: 0.5 })
+      staggerTableRows('.transactions-table', { delay: 0.6 })
+    }
     const loading = ref(true)
     const error = ref(null)
     const allMonthlySpending = ref([])
@@ -375,6 +384,13 @@ export default {
       // Data will automatically update via computed properties
     })
 
+    watch(loading, async (newVal, oldVal) => {
+      if (oldVal === true && newVal === false && !error.value) {
+        await nextTick()
+        playEntranceAnimations()
+      }
+    })
+
     const formatCurrency = (value) => {
       return formatCurrencyUtil(value, currentCurrency.value)
     }
@@ -458,6 +474,7 @@ export default {
     }
 
     onMounted(loadData)
+    onBeforeUnmount(cleanup)
 
     return {
       t,

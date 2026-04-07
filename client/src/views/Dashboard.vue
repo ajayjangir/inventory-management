@@ -213,6 +213,7 @@
                       v-if="!item.purchase_order_id"
                       @click.stop="openPOModal(item)"
                       class="po-button create"
+                      v-ripple
                     >
                       Create PO
                     </button>
@@ -220,6 +221,7 @@
                       v-else
                       @click.stop="viewPO(item)"
                       class="po-button view"
+                      v-ripple
                     >
                       View PO
                     </button>
@@ -297,10 +299,11 @@
 </template>
 
 <script>
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, watch, nextTick } from 'vue'
 import { api } from '../api'
 import { useFilters } from '../composables/useFilters'
 import { useI18n } from '../composables/useI18n'
+import { useAnimations } from '../composables/useAnimations'
 import { formatCurrency } from '../utils/currency'
 import ProductDetailModal from '../components/ProductDetailModal.vue'
 import BacklogDetailModal from '../components/BacklogDetailModal.vue'
@@ -313,6 +316,16 @@ export default {
   },
   setup() {
     const { t, currentCurrency, translateProductName, translateWarehouse } = useI18n()
+    const { staggerFadeUp, barGrow, staggerTableRows, animateDonut, cleanup } = useAnimations()
+
+    const playEntranceAnimations = () => {
+      staggerFadeUp('.kpi-card')
+      barGrow('.kpi-progress', { delay: 0.3 })
+      staggerFadeUp('.chart-card', { delay: 0.4 })
+      barGrow('.h-bar', { delay: 0.6 })
+      animateDonut('.donut-svg-compact', { delay: 0.5 })
+      staggerTableRows('.full-width table', { delay: 0.7 })
+    }
     const loading = ref(true)
     const error = ref(null)
     const summary = ref({})
@@ -676,6 +689,16 @@ export default {
     watch([selectedPeriod, selectedLocation, selectedCategory, selectedStatus], () => {
       loadData()
     })
+
+    // Trigger entrance animations once loading completes successfully
+    watch(loading, async (newVal, oldVal) => {
+      if (oldVal === true && newVal === false && !error.value) {
+        await nextTick()
+        playEntranceAnimations()
+      }
+    })
+
+    onBeforeUnmount(cleanup)
 
     onMounted(loadData)
 

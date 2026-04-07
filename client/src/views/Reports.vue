@@ -126,6 +126,7 @@
 
 <script>
 import axios from 'axios'
+import gsap from 'gsap'
 
 export default {
   name: 'Reports',
@@ -138,12 +139,16 @@ export default {
       totalRevenue: 0,
       avgMonthlyRevenue: 0,
       totalOrders: 0,
-      bestQuarter: ''
+      bestQuarter: '',
+      _timelines: []
     }
   },
   mounted() {
     console.log('Reports component mounted')
     this.loadData()
+  },
+  beforeUnmount() {
+    this._timelines.forEach(tl => { if (tl && tl.kill) tl.kill() })
   },
   methods: {
     async loadData() {
@@ -174,7 +179,26 @@ export default {
       } finally {
         this.loading = false
         console.log('Loading complete')
+        this.$nextTick(() => {
+          if (!this.error) {
+            this.playEntranceAnimations()
+          }
+        })
       }
+    },
+
+    playEntranceAnimations() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+      this._timelines.push(
+        gsap.from('.stat-card', { opacity: 0, y: 30, stagger: 0.08, ease: 'power3.out', duration: 0.5 })
+      )
+      this._timelines.push(
+        gsap.from('.reports-table tbody tr', { opacity: 0, x: -20, stagger: 0.03, ease: 'power2.out', duration: 0.4, delay: 0.3 })
+      )
+      this._timelines.push(
+        gsap.from('.bar', { height: 0, stagger: 0.05, ease: 'elastic.out(1, 0.5)', duration: 1, delay: 0.4 })
+      )
     },
 
     calculateSummaryStats() {

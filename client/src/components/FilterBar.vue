@@ -70,8 +70,10 @@
 </template>
 
 <script>
+import { watch, ref } from 'vue'
 import { useFilters } from '../composables/useFilters'
 import { useI18n } from '../composables/useI18n'
+import gsap from 'gsap'
 
 export default {
   name: 'FilterBar',
@@ -86,6 +88,24 @@ export default {
     } = useFilters()
 
     const { t } = useI18n()
+
+    // Pulse animation on filter change
+    const pulseSelect = (index) => {
+      const selects = document.querySelectorAll('.filter-select')
+      if (selects[index]) {
+        gsap.from(selects[index], {
+          scale: 1.05,
+          duration: 0.3,
+          ease: 'back.out(2)',
+          clearProps: 'scale'
+        })
+      }
+    }
+
+    watch(selectedPeriod, () => pulseSelect(0))
+    watch(selectedLocation, () => pulseSelect(1))
+    watch(selectedCategory, () => pulseSelect(2))
+    watch(selectedStatus, () => pulseSelect(3))
 
     return {
       t,
@@ -102,18 +122,16 @@ export default {
 
 <style scoped>
 .filters-bar {
-  background: #f8fafc;
+  background: #ffffff;
   border-bottom: 1px solid #e2e8f0;
   padding: 0.75rem 0;
   position: sticky;
-  top: 70px;
-  z-index: 90;
+  top: 0;
+  z-index: 50;
 }
 
 .filters-container {
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   gap: 1rem;
