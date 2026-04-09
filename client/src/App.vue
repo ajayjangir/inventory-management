@@ -1,42 +1,51 @@
 <template>
-  <div class="app">
-    <header class="top-nav">
-      <div class="nav-container">
-        <div class="logo">
+  <div class="app" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo" v-if="!sidebarCollapsed">
           <h1>{{ t('nav.companyName') }}</h1>
-          <span class="subtitle">{{ t('nav.subtitle') }}</span>
         </div>
-        <nav class="nav-tabs">
-          <router-link to="/" :class="{ active: $route.path === '/' }">
-            {{ t('nav.overview') }}
-          </router-link>
-          <router-link to="/inventory" :class="{ active: $route.path === '/inventory' }">
-            {{ t('nav.inventory') }}
-          </router-link>
-          <router-link to="/orders" :class="{ active: $route.path === '/orders' }">
-            {{ t('nav.orders') }}
-          </router-link>
-          <router-link to="/spending" :class="{ active: $route.path === '/spending' }">
-            {{ t('nav.finance') }}
-          </router-link>
-          <router-link to="/demand" :class="{ active: $route.path === '/demand' }">
-            {{ t('nav.demandForecast') }}
-          </router-link>
-          <router-link to="/reports" :class="{ active: $route.path === '/reports' }">
-            Reports
-          </router-link>
-        </nav>
-        <LanguageSwitcher />
-        <ProfileMenu
-          @show-profile-details="showProfileDetails = true"
-          @show-tasks="showTasks = true"
-        />
+        <button class="sidebar-toggle" @click="toggleSidebar" :title="sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'">
+          <svg v-if="!sidebarCollapsed" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="4" width="16" height="2" rx="1" fill="currentColor"/>
+            <rect x="2" y="9" width="16" height="2" rx="1" fill="currentColor"/>
+            <rect x="2" y="14" width="16" height="2" rx="1" fill="currentColor"/>
+          </svg>
+          <svg v-else width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
       </div>
-    </header>
-    <FilterBar />
-    <main class="main-content">
-      <router-view />
-    </main>
+      <nav class="sidebar-nav">
+        <router-link
+          v-for="item in navItems"
+          :key="item.path"
+          :to="item.path"
+          :class="{ active: $route.path === item.path }"
+          :title="item.label"
+        >
+          <span class="nav-icon" v-html="item.icon"></span>
+          <span class="nav-label">{{ item.label }}</span>
+        </router-link>
+      </nav>
+    </aside>
+
+    <div class="main-wrapper">
+      <header class="top-bar">
+        <span class="top-bar-subtitle">{{ t('nav.subtitle') }}</span>
+        <div class="top-bar-actions">
+          <LanguageSwitcher />
+          <ProfileMenu
+            @show-profile-details="showProfileDetails = true"
+            @show-tasks="showTasks = true"
+          />
+        </div>
+      </header>
+      <FilterBar />
+      <main class="main-content">
+        <router-view />
+      </main>
+    </div>
 
     <ProfileDetailsModal
       :is-open="showProfileDetails"
@@ -55,7 +64,7 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { api } from './api'
 import { useAuth } from './composables/useAuth'
 import { useI18n } from './composables/useI18n'
@@ -64,6 +73,46 @@ import ProfileMenu from './components/ProfileMenu.vue'
 import ProfileDetailsModal from './components/ProfileDetailsModal.vue'
 import TasksModal from './components/TasksModal.vue'
 import LanguageSwitcher from './components/LanguageSwitcher.vue'
+
+const ICON_OVERVIEW = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="2" y="2" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.9"/>
+  <rect x="11" y="2" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.9"/>
+  <rect x="2" y="11" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.9"/>
+  <rect x="11" y="11" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.9"/>
+</svg>`
+
+const ICON_INVENTORY = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M10 2L17 6v8l-7 4-7-4V6l7-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M10 2v12M3 6l7 4 7-4" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>`
+
+const ICON_ORDERS = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="4" y="2" width="12" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+  <path d="M7 7h6M7 10h6M7 13h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+</svg>`
+
+const ICON_FINANCE = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/>
+  <path d="M10 5v1.5M10 13.5V15M7.5 8.5c0-1.1.9-2 2.5-2s2.5.9 2.5 2c0 1-1 1.5-2.5 2s-2.5 1-2.5 2c0 1.1.9 2 2.5 2s2.5-.9 2.5-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+</svg>`
+
+const ICON_DEMAND = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M2 14l4-4 4 2 4-6 4-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M14 4h4v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`
+
+const ICON_RESTOCKING = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M4 10a6 6 0 0 1 6-6 6 6 0 0 1 4.24 1.76L16 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M16 10a6 6 0 0 1-6 6 6 6 0 0 1-4.24-1.76L4 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M13.5 7.5H16V5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M6.5 12.5H4V15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`
+
+const ICON_REPORTS = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M6 2h8l4 4v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M14 2v4h4" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M7 11h2v4H7zM11 9h2v6h-2z" fill="currentColor" opacity="0.8"/>
+</svg>`
 
 export default {
   name: 'App',
@@ -81,7 +130,29 @@ export default {
     const showTasks = ref(false)
     const apiTasks = ref([])
 
-    // Merge mock tasks from currentUser with API tasks
+    // Sidebar state
+    const sidebarCollapsed = ref(false)
+
+    const toggleSidebar = () => {
+      sidebarCollapsed.value = !sidebarCollapsed.value
+    }
+
+    const checkScreenSize = () => {
+      sidebarCollapsed.value = window.innerWidth < 1024
+    }
+
+    // Nav items with icons
+    const navItems = computed(() => [
+      { path: '/', label: t('nav.overview'), icon: ICON_OVERVIEW },
+      { path: '/inventory', label: t('nav.inventory'), icon: ICON_INVENTORY },
+      { path: '/orders', label: t('nav.orders'), icon: ICON_ORDERS },
+      { path: '/spending', label: t('nav.finance'), icon: ICON_FINANCE },
+      { path: '/demand', label: t('nav.demandForecast'), icon: ICON_DEMAND },
+      { path: '/restocking', label: 'Restocking', icon: ICON_RESTOCKING },
+      { path: '/reports', label: 'Reports', icon: ICON_REPORTS }
+    ])
+
+    // Tasks
     const tasks = computed(() => {
       return [...currentUser.value.tasks, ...apiTasks.value]
     })
@@ -97,7 +168,6 @@ export default {
     const addTask = async (taskData) => {
       try {
         const newTask = await api.createTask(taskData)
-        // Add new task to the beginning of the array
         apiTasks.value.unshift(newTask)
       } catch (err) {
         console.error('Failed to add task:', err)
@@ -106,17 +176,13 @@ export default {
 
     const deleteTask = async (taskId) => {
       try {
-        // Check if it's a mock task (from currentUser)
         const isMockTask = currentUser.value.tasks.some(t => t.id === taskId)
-
         if (isMockTask) {
-          // Remove from mock tasks
           const index = currentUser.value.tasks.findIndex(t => t.id === taskId)
           if (index !== -1) {
             currentUser.value.tasks.splice(index, 1)
           }
         } else {
-          // Remove from API tasks
           await api.deleteTask(taskId)
           apiTasks.value = apiTasks.value.filter(t => t.id !== taskId)
         }
@@ -127,14 +193,10 @@ export default {
 
     const toggleTask = async (taskId) => {
       try {
-        // Check if it's a mock task (from currentUser)
         const mockTask = currentUser.value.tasks.find(t => t.id === taskId)
-
         if (mockTask) {
-          // Toggle mock task status
           mockTask.status = mockTask.status === 'pending' ? 'completed' : 'pending'
         } else {
-          // Toggle API task
           const updatedTask = await api.toggleTask(taskId)
           const index = apiTasks.value.findIndex(t => t.id === taskId)
           if (index !== -1) {
@@ -146,7 +208,15 @@ export default {
       }
     }
 
-    onMounted(loadTasks)
+    onMounted(() => {
+      loadTasks()
+      checkScreenSize()
+      window.addEventListener('resize', checkScreenSize)
+    })
+
+    onUnmounted(() => {
+      window.removeEventListener('resize', checkScreenSize)
+    })
 
     return {
       t,
@@ -155,7 +225,10 @@ export default {
       tasks,
       addTask,
       deleteTask,
-      toggleTask
+      toggleTask,
+      sidebarCollapsed,
+      toggleSidebar,
+      navItems
     }
   }
 }
@@ -176,95 +249,195 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ─── Layout ─────────────────────────────────────────────── */
+
 .app {
   display: flex;
-  flex-direction: column;
   min-height: 100vh;
 }
 
-.top-nav {
+/* ─── Sidebar ─────────────────────────────────────────────── */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 240px;
+  background: #0f172a;
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+  transition: width 0.2s ease;
+  overflow: hidden;
+}
+
+.app.sidebar-collapsed .sidebar {
+  width: 64px;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  height: 56px;
+  border-bottom: 1px solid #1e293b;
+  flex-shrink: 0;
+}
+
+.sidebar-logo h1 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sidebar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.sidebar-toggle:hover {
+  background: #1e293b;
+  color: #f1f5f9;
+}
+
+.app.sidebar-collapsed .sidebar-header {
+  justify-content: center;
+  padding: 0;
+}
+
+/* ─── Sidebar Nav ─────────────────────────────────────────── */
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  border-left: 3px solid transparent;
+  position: relative;
+}
+
+.sidebar-nav a:hover {
+  background: #334155;
+  color: #e2e8f0;
+}
+
+.sidebar-nav a.active {
+  background: #1e3a5f;
+  color: #ffffff;
+  border-left-color: #2563eb;
+}
+
+.nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.nav-icon svg {
+  display: block;
+}
+
+.nav-label {
+  opacity: 1;
+  overflow: hidden;
+  transition: opacity 0.2s ease;
+}
+
+.app.sidebar-collapsed .nav-label {
+  opacity: 0;
+  width: 0;
+  pointer-events: none;
+}
+
+.app.sidebar-collapsed .sidebar-nav a {
+  padding: 12px 0;
+  justify-content: center;
+  border-left: none;
+}
+
+.app.sidebar-collapsed .sidebar-nav a.active {
+  border-left: none;
+  border-right: 3px solid #2563eb;
+}
+
+/* ─── Main Wrapper ────────────────────────────────────────── */
+
+.main-wrapper {
+  margin-left: 240px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: calc(100% - 240px);
+  transition: margin-left 0.2s ease, width 0.2s ease;
+}
+
+.app.sidebar-collapsed .main-wrapper {
+  margin-left: 64px;
+  width: calc(100% - 64px);
+}
+
+/* ─── Top Bar ─────────────────────────────────────────────── */
+
+.top-bar {
   background: #ffffff;
   border-bottom: 1px solid #e2e8f0;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
-  z-index: 100;
-}
-
-.nav-container {
-  max-width: 1600px;
-  margin: 0 auto;
+  z-index: 40;
+  height: 56px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 2rem;
-  height: 70px;
 }
 
-.nav-container > .nav-tabs {
-  margin-left: auto;
-  margin-right: 1rem;
-}
-
-.nav-container > .language-switcher {
-  margin-right: 1rem;
-}
-
-.logo {
-  display: flex;
-  align-items: baseline;
-  gap: 0.75rem;
-}
-
-.logo h1 {
-  font-size: 1.375rem;
-  font-weight: 700;
-  color: #0f172a;
-  letter-spacing: -0.025em;
-}
-
-.subtitle {
+.top-bar-subtitle {
   font-size: 0.813rem;
   color: #64748b;
   font-weight: 400;
-  padding-left: 0.75rem;
-  border-left: 1px solid #e2e8f0;
 }
 
-.nav-tabs {
+.top-bar-actions {
   display: flex;
-  gap: 0.25rem;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-.nav-tabs a {
-  padding: 0.625rem 1.25rem;
-  color: #64748b;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 0.938rem;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-  position: relative;
-}
-
-.nav-tabs a:hover {
-  color: #0f172a;
-  background: #f1f5f9;
-}
-
-.nav-tabs a.active {
-  color: #2563eb;
-  background: #eff6ff;
-}
-
-.nav-tabs a.active::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: #2563eb;
-}
+/* ─── Main Content ────────────────────────────────────────── */
 
 .main-content {
   flex: 1;
@@ -273,6 +446,16 @@ body {
   margin: 0 auto;
   padding: 1.5rem 2rem;
 }
+
+/* ─── FilterBar sticky offset ─────────────────────────────── */
+
+/* FilterBar sticky top is handled inside FilterBar component,
+   but we expose a CSS variable for it to consume if needed */
+.main-wrapper {
+  --filter-bar-top: 56px;
+}
+
+/* ─── Page Header ─────────────────────────────────────────── */
 
 .page-header {
   margin-bottom: 1.5rem;
@@ -290,6 +473,8 @@ body {
   color: #64748b;
   font-size: 0.938rem;
 }
+
+/* ─── Stats Grid ──────────────────────────────────────────── */
 
 .stats-grid {
   display: grid;
@@ -343,6 +528,8 @@ body {
   color: #2563eb;
 }
 
+/* ─── Card ────────────────────────────────────────────────── */
+
 .card {
   background: white;
   border-radius: 10px;
@@ -366,6 +553,8 @@ body {
   color: #0f172a;
   letter-spacing: -0.025em;
 }
+
+/* ─── Table ───────────────────────────────────────────────── */
 
 .table-container {
   overflow-x: auto;
@@ -406,6 +595,8 @@ tbody tr {
 tbody tr:hover {
   background: #f8fafc;
 }
+
+/* ─── Badge ───────────────────────────────────────────────── */
 
 .badge {
   display: inline-block;
@@ -466,6 +657,8 @@ tbody tr:hover {
   background: #dbeafe;
   color: #1e40af;
 }
+
+/* ─── States ──────────────────────────────────────────────── */
 
 .loading {
   text-align: center;
